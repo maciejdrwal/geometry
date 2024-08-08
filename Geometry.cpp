@@ -1,6 +1,7 @@
 #include "Geometry.h"
 
 #include <algorithm>
+#include <cmath>
 
 namespace geometry
 {
