@@ -4,13 +4,13 @@
 
 namespace geometry
 {
-	double distance(const Point & p1, const Point & p2)
+    double distance(const Point & p1, const Point & p2)
     {
-		return std::sqrt(std::pow(p1.x - p2.x, 2) + std::pow(p1.y - p2.y, 2));
-	}
+        return std::sqrt(std::pow(p1.x - p2.x, 2) + std::pow(p1.y - p2.y, 2));
+    }
 
-	double distance(const Point & p, const Line & ls)
-	{
+    double distance(const Point & p, const Line & ls)
+    {
         if (ls.size() == 2)
         {
             const auto p1 = ls.front();
@@ -24,21 +24,21 @@ namespace geometry
             return num / den;
         }
 
-		double dmin = std::numeric_limits<double>::max();
+        double dmin = std::numeric_limits<double>::max();
         for (size_t i = 0; i < ls.size() - 1; ++i)
         {
-			const Line segment{ ls.at(i), ls.at(i + 1) };
+            const Line segment{ ls.at(i), ls.at(i + 1) };
             const auto d = distance(p, segment);
-			dmin = std::min(dmin, d);
+            dmin = std::min(dmin, d);
         }
 
         return dmin;
-	}
+    }
 
     Line fit_linestring(Line ls, const double epsilon)
     {
-        const auto& first_pt = ls.front();
-        const auto& last_pt = ls.back();
+        const auto & first_pt = ls.front();
+        const auto & last_pt = ls.back();
 
         if (ls.size() < 3) return ls;
 
@@ -74,10 +74,8 @@ namespace geometry
         if (n < 4) return line;
         std::vector<Point> points{ line };
         std::vector<Point> result(2 * n);
-        std::sort(
-            points.begin(), points.end(),
-            [](const Point & p1, const Point & p2)
-            { return p1.x < p2.x || (p1.x == p2.x && p1.y < p2.y); });
+        std::sort(points.begin(), points.end(),
+                  [](const Point & p1, const Point & p2) { return p1.x < p2.x || (p1.x == p2.x && p1.y < p2.y); });
         size_t k = 0;
         for (size_t i = 0; i < n; ++i)
         {
@@ -100,58 +98,51 @@ namespace geometry
         return { { result.begin(), result.end() } };
     }
 
-    bool Point::operator==(const Point& other) const
-    {
-	    return x == other.x && y == other.y;
-    }
+    bool Point::operator==(const Point & other) const { return x == other.x && y == other.y; }
 
-    std::string Point::to_wkt() const
-    {
-	    return "POINT(" + std::to_string(x) + ' ' + std::to_string(y) + ')';
-    }
+    std::string Point::to_wkt() const { return "POINT(" + std::to_string(x) + ' ' + std::to_string(y) + ')'; }
 
-    bool Line::is_closed() const
-    { return front() == back(); }
+    bool Line::is_closed() const { return front() == back(); }
 
-    Line Line::append(const Line& other)
+    Line Line::append(const Line & other)
     {
-	    this->insert(this->end(), other.begin(), other.end());
-	    return *this;
+        this->insert(this->end(), other.begin(), other.end());
+        return *this;
     }
 
     std::string Line::to_wkt() const
     {
-	    std::stringstream ss;
-	    ss << "LINESTRING(";
-	    for (size_t i = 0; i < this->size()-1; ++i)
-	    {
-		    const auto & pt = this->at(i);
-		    ss << std::to_string(pt.x) << ' ' << std::to_string(pt.y) << ',';
-	    }
-	    ss << std::to_string(this->back().x) << ' ' << std::to_string(this->back().y) << ')';
-	    return ss.str();
+        std::stringstream ss;
+        ss << "LINESTRING(";
+        for (size_t i = 0; i < this->size() - 1; ++i)
+        {
+            const auto & pt = this->at(i);
+            ss << std::to_string(pt.x) << ' ' << std::to_string(pt.y) << ',';
+        }
+        ss << std::to_string(this->back().x) << ' ' << std::to_string(this->back().y) << ')';
+        return ss.str();
     }
 
-    void Line::read_wkt(const std::string& str)
+    void Line::read_wkt(const std::string & str)
     {
-	    std::string wkt = str.substr(str.find('(') + 1, str.find(')') - str.find('(') - 1);
-	    std::stringstream ss(wkt);
-	    std::string token;
-	    while (std::getline(ss, token, ','))
-	    {
-		    std::stringstream ss2(token);
-		    std::string x, y;
-		    std::getline(ss2, x, ' ');
-		    std::getline(ss2, y, ' ');
-		    this->push_back({ std::stod(x), std::stod(y) });
-	    }
+        std::string wkt = str.substr(str.find('(') + 1, str.find(')') - str.find('(') - 1);
+        std::stringstream ss(wkt);
+        std::string token;
+        while (std::getline(ss, token, ','))
+        {
+            std::stringstream ss2(token);
+            std::string x, y;
+            std::getline(ss2, x, ' ');
+            std::getline(ss2, y, ' ');
+            this->push_back({ std::stod(x), std::stod(y) });
+        }
     }
 
-    double vect_direction(const Point& pi, const Point& pj, const Point& pk)
+    double vect_direction(const Point & pi, const Point & pj, const Point & pk)
     {
-	    const double xi = pi.x, yi = pi.y;
-	    const double xj = pj.x, yj = pj.y;
-	    const double xk = pk.x, yk = pk.y;
-	    return (xk - xi) * (yj - yi) - (xj - xi) * (yk - yi);
+        const double xi = pi.x, yi = pi.y;
+        const double xj = pj.x, yj = pj.y;
+        const double xk = pk.x, yk = pk.y;
+        return (xk - xi) * (yj - yi) - (xj - xi) * (yk - yi);
     }
-}
+}  // namespace geometry
